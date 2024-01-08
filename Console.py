@@ -1,4 +1,5 @@
 from Hospital import Hospital
+import re
 
 
 class Console:
@@ -9,21 +10,38 @@ class Console:
         while True:
             command = input("Введите команду: ").lower()
 
-            if command in ["стоп", "stop"]:
+            if (command in ["stop"] or
+                    Console.typo_checking(command, "стоп")):
                 Console.print_exit_message()
                 break
-            elif command in ["узнать статус пациента", "get status"]:
+            elif (command in ["get status"] or
+                  Console.typo_checking(command, "узнать статус пациента")):
                 Console.get_patient_status(hospital)
-            elif command in ["повысить статус пациента", "status up"]:
+            elif (command in ["status up"] or
+                  Console.typo_checking(command, "повысить статус пациента")):
                 Console.increase_patient_status(hospital)
-            elif command in ["понизить статус пациента", "status down"]:
+            elif (command in ["status down"]
+                  or Console.typo_checking(command, "понизить статус пациента")):
                 Console.decrease_patient_status(hospital)
-            elif command in ["выписать пациента", "discharge"]:
+            elif (command in ["discharge"] or
+                  Console.typo_checking(command, "выписать пациента")):
                 Console.discharge_patient(hospital)
-            elif command in ["рассчитать статистику", "calculate statistics"]:
+            elif (command in ["calculate statistics"] or
+                  Console.typo_checking(command, "рассчитать статистику")):
                 Console.print_statistics(hospital)
             else:
                 Console.print_unknown_command()
+
+    @staticmethod
+    def typo_checking(command, reference):
+        # Заменяем в строке символы [ао] на [ао] и символы [ие] на [ие]
+        modified_command = re.sub(r'[ао]', '[ао]', reference, flags=re.IGNORECASE | re.UNICODE)
+        modified_command = re.sub(r'[ие]', '[ие]', modified_command, flags=re.IGNORECASE | re.UNICODE)
+
+        # Создаем паттерн из модифицированной строки с добавлением границ слов
+        pattern = re.compile(r'\b' + modified_command + r'\b', re.IGNORECASE | re.UNICODE)
+        match = re.search(pattern, command)
+        return match
 
     @staticmethod
     def get_patient_status(hospital):
