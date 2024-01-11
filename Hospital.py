@@ -2,8 +2,10 @@ from Patient import Patient, PatientStatus
 
 
 class Hospital:
-    def __init__(self):
-        self.patients = [Patient(patient_id) for patient_id in range(1, 201)]
+    def __init__(self, patients=None):
+        if patients is None:
+            patients = [Patient(patient_id) for patient_id in range(1, 201)]
+        self.patients = patients
 
     @staticmethod
     def get_status_name(status):
