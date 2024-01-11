@@ -14,6 +14,6 @@ if __name__ == "__main__":
     '''Интерфейс обращения в госпиталь'''
     commands = Console(hospital, dialog_with_user)
 
-    '''Общие приложение и соединени'''
+    '''Общие приложение и соединение'''
     app = Application(commands)
     app.run()
