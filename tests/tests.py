@@ -1,6 +1,10 @@
-from unittest import mock
 from Console import Console
 from Hospital import Hospital
+from Patient import Patient
+from DialogWithUser import DialogWithUser
+from Application import Application
+
+from unittest import mock
 from io import StringIO
 import sys
 import pytest
@@ -8,7 +12,18 @@ import pytest
 
 @pytest.fixture
 def hospital():
-    return Hospital()
+    hospital = Hospital([Patient(patient_id) for patient_id in range(1, 201)])
+    dialog_with_user = DialogWithUser()
+
+    return Console(hospital, dialog_with_user)
+
+
+@pytest.fixture
+def application():
+    hospital = Hospital([Patient(patient_id) for patient_id in range(1, 201)])
+    dialog_with_user = DialogWithUser()
+    commands = Console(hospital, dialog_with_user)
+    return Application(commands)
 
 
 def test_increase_patient_status_valid(hospital):
@@ -26,12 +41,9 @@ def test_increase_patient_status_absent_id(hospital):
     invalid_ids = ["201"]
     for invalid_id in invalid_ids:
         with mock.patch('builtins.input', return_value=invalid_id):
-            buffer = StringIO()
-            sys.stdout = buffer
-            Console.increase_patient_status(hospital)
-            output = buffer.getvalue()
-            expected_output = "Ошибка. В больнице нет пациента с таким ID\n"
-            assert output == expected_output
+            with pytest.raises(ValueError) as exception:
+                Console.increase_patient_status(hospital)
+            assert str(exception.value) == "Ошибка. В больнице нет пациента с таким ID"
 
 
 def test_increase_patient_status_invalid_id(hospital):
@@ -39,12 +51,9 @@ def test_increase_patient_status_invalid_id(hospital):
     invalid_ids = ["0", "-2", "1.5"]
     for invalid_id in invalid_ids:
         with mock.patch('builtins.input', return_value=invalid_id):
-            buffer = StringIO()
-            sys.stdout = buffer
-            Console.increase_patient_status(hospital)
-            output = buffer.getvalue()
-            expected_output = "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
-            assert output == expected_output
+            with pytest.raises(TypeError) as exception:
+                Console.increase_patient_status(hospital)
+            assert str(exception.value) == "Ошибка. ID пациента должно быть числом (целым, положительным)"
 
 
 def test_increase_patient_status_maximun_discharge(hospital):
@@ -104,7 +113,7 @@ def test_print_statistics_all_status(hospital):
                          "\tв статусе 'Готов к выписке': 1 чел.\n"
 
 
-def test_work_day_basic_version():
+def test_work_day_basic_version(application):
     """Тест базового сценария"""
     with mock.patch('builtins.input', side_effect=['узнать статус пациента', '200',
                                                    'status up', '2',
@@ -114,7 +123,7 @@ def test_work_day_basic_version():
                                                    'стоп']):
         buffer = StringIO()
         sys.stdout = buffer
-        Console.run()
+        application.run()
         output = buffer.getvalue()
         assert output == "Статус пациента: 'Болен'\n" \
                          "Новый статус пациента: 'Слегка болен'\n" \
@@ -127,7 +136,7 @@ def test_work_day_basic_version():
                          "Сеанс завершён.\n"
 
 
-def test_work_day_patient_discharge():
+def test_work_day_patient_discharge(application):
     """Тест повышения статус на максимальное значение, которая приводит к выписке пациента"""
     with mock.patch('builtins.input', side_effect=['повысить статус пациента', '1',
                                                    'повысить статус пациента', '1',
@@ -136,7 +145,7 @@ def test_work_day_patient_discharge():
                                                    'стоп']):
         buffer = StringIO()
         sys.stdout = buffer
-        Console.run()
+        application.run()
         output = buffer.getvalue()
         assert output == "Новый статус пациента: 'Слегка болен'\n" \
                          "Новый статус пациента: 'Готов к выписке'\n" \
@@ -146,7 +155,7 @@ def test_work_day_patient_discharge():
                          "Сеанс завершён.\n"
 
 
-def test_work_day_patient_without_discharge():
+def test_work_day_patient_without_discharge(application):
     """Тест повышения статус на максимальное значение, которая приводит к выписке пациента"""
     with mock.patch('builtins.input', side_effect=['повысить статус пациента', '1',
                                                    'повысить статус пациента', '1',
@@ -155,7 +164,7 @@ def test_work_day_patient_without_discharge():
                                                    'стоп']):
         buffer = StringIO()
         sys.stdout = buffer
-        Console.run()
+        application.run()
         output = buffer.getvalue()
         assert output == "Новый статус пациента: 'Слегка болен'\n" \
                          "Новый статус пациента: 'Готов к выписке'\n" \
@@ -166,7 +175,7 @@ def test_work_day_patient_without_discharge():
                          "Сеанс завершён.\n"
 
 
-def test_work_day_failed_attempt_to_demote_lowest_status():
+def test_work_day_failed_attempt_to_demote_lowest_status(application):
     """Тест неудачная попытка понизить самый низкий статус"""
     with mock.patch('builtins.input', side_effect=['понизить статус пациента', '1',
                                                    'понизить статус пациента', '1',
@@ -174,7 +183,7 @@ def test_work_day_failed_attempt_to_demote_lowest_status():
                                                    'стоп']):
         buffer = StringIO()
         sys.stdout = buffer
-        Console.run()
+        application.run()
         output = buffer.getvalue()
         assert output == "Новый статус пациента: 'Тяжело болен'\n" \
                          "Ошибка. Нельзя понизить самый низкий статус (наши пациенты не умирают).\n" \
