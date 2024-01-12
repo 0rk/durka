@@ -1,6 +1,10 @@
 import re
 
 
+class CommandError(Exception):
+    pass
+
+
 class Application:
     def __init__(self, commands):
         self.commands = commands
@@ -29,10 +33,13 @@ class Application:
                       self.typo_checking(command, "рассчитать статистику")):
                     self.commands.print_statistics()
                 else:
-                    raise ValueError
-            except ValueError:
-                print("Неизвестная команда! Попробуйте ещё раз")
-
+                    raise CommandError("Неизвестная команда! Попробуйте ещё раз")
+            except ValueError as ve:
+                print(ve)
+            except TypeError as te:
+                print(te)
+            except CommandError as ce:
+                print(ce)
 
     @staticmethod
     def typo_checking(command, reference):
