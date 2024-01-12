@@ -19,39 +19,56 @@ class Hospital:
 
     def get_patient_status(self, patient_id):
         patient = self.get_patient(patient_id)
-        return f"Статус пациента: '{self.get_status_name(patient.status)}'" \
-            if patient else "Ошибка. Введите корректный ID пациента."
+        try:
+            if patient:
+                return f"Статус пациента: '{self.get_status_name(patient.status)}'"
+            else:
+                raise ValueError
+        except ValueError:
+            return "Ошибка. Введите корректный ID пациента."
 
     def increase_patient_status(self, patient_id):
-        patient = self.get_patient(patient_id)
-        if patient:
-            if patient.increase_status():
-                return f"Новый статус пациента: '{self.get_status_name(patient.status)}'"
-            else:
-                confirm = input("Желаете этого клиента выписать? (да/нет): ").lower()
-                if confirm == "да":
-                    self.patients.remove(patient)
-                    return "Пациент выписан из больницы"
-                elif confirm == "нет":
-                    return f"Пациент остался в статусе '{self.get_status_name(patient.status)}'"
+        try:
+            patient = self.get_patient(patient_id)
+            if patient:
+                if patient.increase_status():
+                    return f"Новый статус пациента: '{self.get_status_name(patient.status)}'"
                 else:
-                    return "Некорректный ввод."
-        else:
-            return "Ошибка. Введите корректный ID пациента."
+                    confirm = input("Желаете этого клиента выписать? (да/нет): ").lower()
+                    if confirm == "да":
+                        self.patients.remove(patient)
+                        return "Пациент выписан из больницы"
+                    elif confirm == "нет":
+                        return f"Пациент остался в статусе '{self.get_status_name(patient.status)}'"
+                    else:
+                        raise ValueError
+            else:
+                raise KeyError
+        except ValueError:
+            print("Некорректный ввод.")
+        except KeyError:
+            print("Ошибка. Введите корректный ID пациента.")
 
     def decrease_patient_status(self, patient_id):
         patient = self.get_patient(patient_id)
-        return f"Новый статус пациента: '{self.get_status_name(patient.status)}'" \
-            if patient and patient.decrease_status() else \
-            "Ошибка. Нельзя понизить самый низкий статус (наши пациенты не умирают)."
+        try:
+            if patient and patient.decrease_status():
+                return f"Новый статус пациента: '{self.get_status_name(patient.status)}'"
+            else:
+                raise ValueError
+        except ValueError:
+            return "Ошибка. Нельзя понизить самый низкий статус (наши пациенты не умирают)."
 
     def discharge_patient(self, patient_id):
         patient = self.get_patient(patient_id)
-        if patient:
-            self.patients.remove(patient)
-            return "Пациент выписан из больницы"
-        else:
-            return "Ошибка. Введите корректный ID пациента."
+        try:
+            if patient:
+                self.patients.remove(patient)
+                return "Пациент выписан из больницы"
+            else:
+                raise ValueError
+        except ValueError:
+            print("Ошибка. Введите корректный ID пациента.")
 
     def calculate_statistics(self):
         total_patients = len(self.patients)

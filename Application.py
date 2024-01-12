@@ -8,28 +8,30 @@ class Application:
     def run(self):
         while True:
             command = input("Введите команду: ").lower()
-
-            if (command in ["stop"] or
-                    self.typo_checking(command, "стоп")):
-                self.commands.print_exit_message()
-                break
-            elif (command in ["get status"] or
-                  self.typo_checking(command, "узнать статус пациента")):
-                self.commands.get_patient_status()
-            elif (command in ["status up"] or
-                  self.typo_checking(command, "повысить статус пациента")):
-                self.commands.increase_patient_status()
-            elif (command in ["status down"]
-                  or self.typo_checking(command, "понизить статус пациента")):
-                self.commands.decrease_patient_status()
-            elif (command in ["discharge"] or
-                  self.typo_checking(command, "выписать пациента")):
-                self.commands.discharge_patient()
-            elif (command in ["calculate statistics"] or
-                  self.typo_checking(command, "рассчитать статистику")):
-                self.commands.print_statistics()
-            else:
-                raise ValueError("Неизвестная команда! Попробуйте ещё раз")
+            try:
+                if (command in ["stop"] or
+                        self.typo_checking(command, "стоп")):
+                    self.commands.print_exit_message()
+                    break
+                elif (command in ["get status"] or
+                      self.typo_checking(command, "узнать статус пациента")):
+                    self.commands.get_patient_status()
+                elif (command in ["status up"] or
+                      self.typo_checking(command, "повысить статус пациента")):
+                    self.commands.increase_patient_status()
+                elif (command in ["status down"]
+                      or self.typo_checking(command, "понизить статус пациента")):
+                    self.commands.decrease_patient_status()
+                elif (command in ["discharge"] or
+                      self.typo_checking(command, "выписать пациента")):
+                    self.commands.discharge_patient()
+                elif (command in ["calculate statistics"] or
+                      self.typo_checking(command, "рассчитать статистику")):
+                    self.commands.print_statistics()
+                else:
+                    raise ValueError
+            except ValueError:
+                print("Неизвестная команда! Попробуйте ещё раз")
 
 
     @staticmethod
