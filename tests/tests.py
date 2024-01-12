@@ -41,9 +41,11 @@ def test_increase_patient_status_absent_id(hospital):
     invalid_ids = ["201"]
     for invalid_id in invalid_ids:
         with mock.patch('builtins.input', return_value=invalid_id):
-            with pytest.raises(ValueError) as exception:
-                Console.increase_patient_status(hospital)
-            assert str(exception.value) == "Ошибка. В больнице нет пациента с таким ID"
+            buffer = StringIO()
+            sys.stdout = buffer
+            Console.increase_patient_status(hospital)
+            output = buffer.getvalue()
+            assert output == "Ошибка. В больнице нет пациента с таким ID\n"
 
 
 def test_increase_patient_status_invalid_id(hospital):
@@ -51,9 +53,11 @@ def test_increase_patient_status_invalid_id(hospital):
     invalid_ids = ["0", "-2", "1.5"]
     for invalid_id in invalid_ids:
         with mock.patch('builtins.input', return_value=invalid_id):
-            with pytest.raises(TypeError) as exception:
-                Console.increase_patient_status(hospital)
-            assert str(exception.value) == "Ошибка. ID пациента должно быть числом (целым, положительным)"
+            buffer = StringIO()
+            sys.stdout = buffer
+            Console.increase_patient_status(hospital)
+            output = buffer.getvalue()
+            assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
 
 
 def test_increase_patient_status_maximun_discharge(hospital):
