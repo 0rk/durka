@@ -11,43 +11,28 @@ class Application:
 
     def run(self):
         while True:
-            command = input("Введите команду: ").lower()
+            command = self.commands.dialog_with_user.get_command()
             try:
-                if (command in ["stop"] or
-                        self.typo_checking(command, "стоп")):
-                    self.commands.print_exit_message()
+                if any(re.search(command, keyword)
+                       for keyword in ["stop", "стоп"]):
+                    self.commands.dialog_with_user.exit_message()
                     break
-                elif (command in ["get status"] or
-                      self.typo_checking(command, "узнать статус пациента")):
+                elif any(re.search(command, keyword)
+                         for keyword in ["get status", "узнать статус пациента"]):
                     self.commands.get_patient_status()
-                elif (command in ["status up"] or
-                      self.typo_checking(command, "повысить статус пациента")):
+                elif any(re.search(command, keyword)
+                         for keyword in ["status up", "повысить статус пациента"]):
                     self.commands.increase_patient_status()
-                elif (command in ["status down"]
-                      or self.typo_checking(command, "понизить статус пациента")):
+                elif any(re.search(command, keyword)
+                         for keyword in ["status down", "понизить статус пациента"]):
                     self.commands.decrease_patient_status()
-                elif (command in ["discharge"] or
-                      self.typo_checking(command, "выписать пациента")):
+                elif any(re.search(command, keyword)
+                         for keyword in ["discharge", "выписать пациента"]):
                     self.commands.discharge_patient()
-                elif (command in ["calculate statistics"] or
-                      self.typo_checking(command, "рассчитать статистику")):
-                    self.commands.print_statistics()
+                elif any(re.search(command, keyword)
+                         for keyword in ["calculate statistics", "рассчитать статистику"]):
+                    self.commands.return_statistics()
                 else:
                     raise CommandError("Неизвестная команда! Попробуйте ещё раз")
-            except ValueError as ve:
-                print(ve)
-            except TypeError as te:
-                print(te)
-            except CommandError as ce:
-                print(ce)
-
-    @staticmethod
-    def typo_checking(command, reference):
-        # Заменяем в строке символы [ао] на [ао] и символы [ие] на [ие]
-        modified_command = re.sub(r'[ао]', '[ао]', reference, flags=re.IGNORECASE | re.UNICODE)
-        modified_command = re.sub(r'[ие]', '[ие]', modified_command, flags=re.IGNORECASE | re.UNICODE)
-
-        # Создаем паттерн из модифицированной строки с добавлением границ слов
-        pattern = re.compile(r'\b' + modified_command + r'\b', re.IGNORECASE | re.UNICODE)
-        match = re.search(pattern, command)
-        return match
+            except Exception as exception:
+                self.commands.dialog_with_user.return_message_to_user(exception)
