@@ -23,7 +23,7 @@ def application():
     hospital = Hospital([Patient(patient_id) for patient_id in range(1, 201)])
     dialog_with_user = DialogWithUser()
     commands = Console(hospital, dialog_with_user)
-    return Application(commands)
+    return Application(commands, dialog_with_user)
 
 
 def test_increase_patient_status_valid(hospital):
@@ -43,9 +43,9 @@ def test_increase_patient_status_absent_id(hospital):
         with mock.patch('builtins.input', return_value=invalid_id):
             buffer = StringIO()
             sys.stdout = buffer
-            with pytest.raises(ValueError) as exception:
-                Console.increase_patient_status(hospital)
-            assert str(exception.value) == "Ошибка. В больнице нет пациента с таким ID"
+            Console.increase_patient_status(hospital)
+            output = buffer.getvalue()
+            assert output == "Ошибка. В больнице нет пациента с таким ID\n"
 
 
 def test_increase_patient_status_invalid_id(hospital):
@@ -53,9 +53,23 @@ def test_increase_patient_status_invalid_id(hospital):
     invalid_ids = ["0", "-2", "1.5"]
     for invalid_id in invalid_ids:
         with mock.patch('builtins.input', return_value=invalid_id):
-            with pytest.raises(TypeError) as exception:
-                Console.increase_patient_status(hospital)
-            assert str(exception.value) == "Ошибка. ID пациента должно быть числом (целым, положительным)"
+            buffer = StringIO()
+            sys.stdout = buffer
+            Console.increase_patient_status(hospital)
+            output = buffer.getvalue()
+            assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
+
+
+def test_get_status_invalid_id(hospital):
+    """Тест увеличения статуса пациента некорректный ID"""
+    invalid_ids = ["0", "-2", "1.5"]
+    for invalid_id in invalid_ids:
+        with mock.patch('builtins.input', return_value=invalid_id):
+            buffer = StringIO()
+            sys.stdout = buffer
+            Console.get_patient_status(hospital)
+            output = buffer.getvalue()
+            assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
 
 
 def test_increase_patient_status_maximun_discharge(hospital):

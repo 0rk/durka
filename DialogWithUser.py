@@ -4,16 +4,6 @@ from Patient import PatientStatus
 
 class DialogWithUser:
     @staticmethod
-    def get_status_name(status):
-        status_names = {
-            PatientStatus.SEVERELY_ILL: "Тяжело болен",
-            PatientStatus.ILL: "Болен",
-            PatientStatus.SLIGHTLY_ILL: "Слегка болен",
-            PatientStatus.READY_TO_DISCHARGE: "Готов к выписке"
-        }
-        return status_names.get(status, "Неизвестный статус")
-
-    @staticmethod
     def is_positive_integer(value):
         try:
             return int(value) > 0
@@ -31,15 +21,12 @@ class DialogWithUser:
         return pattern
 
     @staticmethod
-    def get_patient_id(hospital):
+    def get_patient_id():
         patient_id = input("Введите ID пациента: ")
         if DialogWithUser.is_positive_integer(patient_id):
-            if int(patient_id) <= len(hospital.patients):
-                return int(patient_id)
-            else:
-                raise ValueError("Ошибка. В больнице нет пациента с таким ID")
+            return int(patient_id)
 
-        raise TypeError("Ошибка. ID пациента должно быть числом (целым, положительным)")
+        raise ValueError("Ошибка. ID пациента должно быть числом (целым, положительным)")
 
     @staticmethod
     def get_command(prompt="Введите команду: "):
@@ -61,25 +48,14 @@ class DialogWithUser:
     def exit_message(self):
         self.return_message_to_user("Сеанс завершён.")
 
-    def return_statistics(self, total_patients, statuses_count):
-        self.return_message_to_user(f"В больнице на данный момент находится {total_patients} чел., из них:")
-        self.print_status_count("Тяжело болен", PatientStatus.SEVERELY_ILL, statuses_count)
-        self.print_status_count("Болен", PatientStatus.ILL, statuses_count)
-        self.print_status_count("Слегка болен", PatientStatus.SLIGHTLY_ILL, statuses_count)
-        self.print_status_count("Готов к выписке", PatientStatus.READY_TO_DISCHARGE, statuses_count)
+    def patient_status(self, patient_status):
+        self.return_message_to_user(f"Статус пациента: '{patient_status}'")
 
-    def print_status_count(self, status_name, status_enum, statuses_count):
-        if statuses_count[status_enum] > 0:
-            self.return_message_to_user(f"\tв статусе '{status_name}': {statuses_count[status_enum]} чел.")
+    def new_patient_status(self, patient_status):
+        self.return_message_to_user(f"Новый статус пациента: '{patient_status}'")
 
-    def patient_status(self, patient):
-        self.return_message_to_user(f"Статус пациента: '{self.get_status_name(patient)}'")
-
-    def new_patient_status(self, patient):
-        self.return_message_to_user(f"Новый статус пациента: '{self.get_status_name(patient)}'")
-
-    def remind_patient_status(self, patient):
-        self.return_message_to_user(f"Пациент остался в статусе '{self.get_status_name(patient)}'")
+    def remind_patient_status(self, patient_status):
+        self.return_message_to_user(f"Пациент остался в статусе '{patient_status}'")
 
     def discharge_patient(self):
         self.return_message_to_user("Пациент выписан из больницы")
