@@ -5,7 +5,7 @@ class Console:
 
     def get_patient_status(self):
         try:
-            patient_id = self.get_patient_id()
+            patient_id = self._get_patient_id()
             patient_status = self._hospital.get_patient_status(patient_id)
             self._dialog_with_user.patient_status(patient_status)
         except ValueError as exception:
@@ -13,7 +13,7 @@ class Console:
 
     def increase_patient_status(self):
         try:
-            patient_id = self.get_patient_id()
+            patient_id = self._get_patient_id()
             patient_status, possibility_discharge = self._hospital.increase_patient_status(patient_id)
             if possibility_discharge:
                 confirm = self._dialog_with_user.proposal_discharge_patient()
@@ -30,7 +30,7 @@ class Console:
 
     def decrease_patient_status(self):
         try:
-            patient_id = self.get_patient_id()
+            patient_id = self._get_patient_id()
             patient_status = self._hospital.decrease_patient_status(patient_id)
             self._dialog_with_user.new_patient_status(patient_status)
         except ValueError as exception:
@@ -38,7 +38,7 @@ class Console:
 
     def discharge_patient(self):
         try:
-            patient_id = self.get_patient_id()
+            patient_id = self._get_patient_id()
             self._hospital.discharge_patient(patient_id)
             self._dialog_with_user.discharge_patient()
         except ValueError as exception:
@@ -52,7 +52,7 @@ class Console:
             if count > 0:
                 self._dialog_with_user.return_message_to_user(f"\tв статусе '{status_name}': {count} чел.")
 
-    def get_patient_id(self):
+    def _get_patient_id(self):
         patient_id = self._dialog_with_user.get_patient_id()
         if self._hospital.get_patient(patient_id) and patient_id is not None:
             return patient_id

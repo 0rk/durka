@@ -4,14 +4,14 @@ from Patient import PatientStatus
 
 class DialogWithUser:
     @staticmethod
-    def is_positive_integer(value):
+    def _is_positive_integer(value):
         try:
             return int(value) > 0
         except ValueError:
             return False
 
     @staticmethod
-    def typo_checking(command):
+    def _typo_checking(command):
         # Заменяем в строке символы [ао] на [ао] и символы [ие] на [ие]
         modified_command = re.sub(r'[ао]', '[ао]', command, flags=re.IGNORECASE | re.UNICODE)
         modified_command = re.sub(r'[ие]', '[ие]', modified_command, flags=re.IGNORECASE | re.UNICODE)
@@ -23,7 +23,7 @@ class DialogWithUser:
     @staticmethod
     def get_patient_id():
         patient_id = input("Введите ID пациента: ")
-        if DialogWithUser.is_positive_integer(patient_id):
+        if DialogWithUser._is_positive_integer(patient_id):
             return int(patient_id)
 
         raise ValueError("Ошибка. ID пациента должно быть числом (целым, положительным)")
@@ -31,7 +31,7 @@ class DialogWithUser:
     @staticmethod
     def get_command(prompt="Введите команду: "):
         command = input(prompt).lower()
-        return DialogWithUser.typo_checking(command)
+        return DialogWithUser._typo_checking(command)
 
     @staticmethod
     def proposal_discharge_patient():
