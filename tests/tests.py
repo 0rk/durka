@@ -1,4 +1,4 @@
-from Console import Console
+from Command import Command
 from Hospital import Hospital
 from Patient import Patient
 from DialogWithUser import DialogWithUser
@@ -15,14 +15,14 @@ def hospital():
     hospital = Hospital([Patient(patient_id) for patient_id in range(1, 201)])
     dialog_with_user = DialogWithUser()
 
-    return Console(hospital, dialog_with_user)
+    return Command(hospital, dialog_with_user)
 
 
 @pytest.fixture
 def application():
     hospital = Hospital([Patient(patient_id) for patient_id in range(1, 201)])
     dialog_with_user = DialogWithUser()
-    commands = Console(hospital, dialog_with_user)
+    commands = Command(hospital, dialog_with_user)
     return Application(commands, dialog_with_user)
 
 
@@ -31,7 +31,7 @@ def test_increase_patient_status_valid(hospital):
     with mock.patch('builtins.input', return_value="1"):
         buffer = StringIO()
         sys.stdout = buffer
-        Console.increase_patient_status(hospital)
+        Command.increase_patient_status(hospital)
         output = buffer.getvalue()
         assert output == "Новый статус пациента: 'Слегка болен'\n"
 
@@ -43,7 +43,7 @@ def test_increase_patient_status_absent_id(hospital):
         with mock.patch('builtins.input', return_value=invalid_id):
             buffer = StringIO()
             sys.stdout = buffer
-            Console.increase_patient_status(hospital)
+            Command.increase_patient_status(hospital)
             output = buffer.getvalue()
             assert output == "Ошибка. В больнице нет пациента с таким ID\n"
 
@@ -55,7 +55,7 @@ def test_increase_patient_status_invalid_id(hospital):
         with mock.patch('builtins.input', return_value=invalid_id):
             buffer = StringIO()
             sys.stdout = buffer
-            Console.increase_patient_status(hospital)
+            Command.increase_patient_status(hospital)
             output = buffer.getvalue()
             assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
 
@@ -67,7 +67,7 @@ def test_get_status_invalid_id(hospital):
         with mock.patch('builtins.input', return_value=invalid_id):
             buffer = StringIO()
             sys.stdout = buffer
-            Console.get_patient_status(hospital)
+            Command.get_patient_status(hospital)
             output = buffer.getvalue()
             assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
 
@@ -78,7 +78,7 @@ def test_increase_patient_status_maximun_discharge(hospital):
         buffer = StringIO()
         sys.stdout = buffer
         for time in range(3):
-            Console.increase_patient_status(hospital)
+            Command.increase_patient_status(hospital)
         output = buffer.getvalue()
         assert output == "Новый статус пациента: 'Слегка болен'\n" \
                          "Новый статус пациента: 'Готов к выписке'\n" \
@@ -91,7 +91,7 @@ def test_increase_patient_status_maximun_without_discharge(hospital):
         buffer = StringIO()
         sys.stdout = buffer
         for time in range(3):
-            Console.increase_patient_status(hospital)
+            Command.increase_patient_status(hospital)
         output = buffer.getvalue()
         assert output == "Новый статус пациента: 'Слегка болен'\n" \
                          "Новый статус пациента: 'Готов к выписке'\n" \
@@ -102,7 +102,7 @@ def test_print_statistics(hospital):
     """Расчет статистики"""
     buffer = StringIO()
     sys.stdout = buffer
-    Console.return_statistics(hospital)
+    Command.return_statistics(hospital)
     output = buffer.getvalue()
     assert output == "В больнице на данный момент находится 200 чел., из них:\n" \
                      "\tв статусе 'Болен': 200 чел.\n"
@@ -113,10 +113,10 @@ def test_print_statistics_all_status(hospital):
     with mock.patch('builtins.input', side_effect=['1', '2', '3', '3']):
         buffer = StringIO()
         sys.stdout = buffer
-        Console.decrease_patient_status(hospital)
+        Command.decrease_patient_status(hospital)
         for time in range(3):
-            Console.increase_patient_status(hospital)
-        Console.return_statistics(hospital)
+            Command.increase_patient_status(hospital)
+        Command.return_statistics(hospital)
         output = buffer.getvalue()
         assert output == "Новый статус пациента: 'Тяжело болен'\n" \
                          "Новый статус пациента: 'Слегка болен'\n" \

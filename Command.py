@@ -1,4 +1,4 @@
-class Console:
+class Command:
     def __init__(self, hospital, dialog_with_user):
         self._hospital = hospital
         self._dialog_with_user = dialog_with_user

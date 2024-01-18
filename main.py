@@ -1,4 +1,4 @@
-from Console import Console
+from Command import Command
 from Hospital import Hospital
 from Patient import Patient
 from DialogWithUser import DialogWithUser
@@ -12,7 +12,7 @@ if __name__ == "__main__":
     dialog_with_user = DialogWithUser()
 
     '''Интерфейс обращения в госпиталь'''
-    commands = Console(hospital, dialog_with_user)
+    commands = Command(hospital, dialog_with_user)
 
     '''Общие приложение и соединение'''
     app = Application(commands, dialog_with_user)
