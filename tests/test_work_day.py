@@ -26,9 +26,10 @@ def application():
     return Application(commands, dialog_with_user)
 
 
-def test_increase_patient_status_valid(hospital):
+@pytest.mark.parametrize("valid_id", ["1"])
+def test_increase_patient_status_valid(hospital, valid_id):
     """Тест увеличения статуса пациента валидный ID"""
-    with mock.patch('builtins.input', return_value="1"):
+    with mock.patch('builtins.input', return_value=valid_id):
         buffer = StringIO()
         sys.stdout = buffer
         Command.increase_patient_status(hospital)
@@ -36,40 +37,37 @@ def test_increase_patient_status_valid(hospital):
         assert output == "Новый статус пациента: 'Слегка болен'\n"
 
 
-def test_increase_patient_status_absent_id(hospital):
+@pytest.mark.parametrize("invalid_id", ["201"])
+def test_increase_patient_status_absent_id(hospital, invalid_id):
     """Тест увеличения статуса пациента невалидный ID"""
-    invalid_ids = ["201"]
-    for invalid_id in invalid_ids:
-        with mock.patch('builtins.input', return_value=invalid_id):
-            buffer = StringIO()
-            sys.stdout = buffer
-            Command.increase_patient_status(hospital)
-            output = buffer.getvalue()
-            assert output == "Ошибка. В больнице нет пациента с таким ID\n"
+    with mock.patch('builtins.input', return_value=invalid_id):
+        buffer = StringIO()
+        sys.stdout = buffer
+        Command.increase_patient_status(hospital)
+        output = buffer.getvalue()
+        assert output == "Ошибка. В больнице нет пациента с таким ID\n"
 
 
-def test_increase_patient_status_invalid_id(hospital):
+@pytest.mark.parametrize("invalid_id", ["0", "-2", "1.5"])
+def test_increase_patient_status_invalid_id(hospital, invalid_id):
     """Тест увеличения статуса пациента некорректный ID"""
-    invalid_ids = ["0", "-2", "1.5"]
-    for invalid_id in invalid_ids:
-        with mock.patch('builtins.input', return_value=invalid_id):
-            buffer = StringIO()
-            sys.stdout = buffer
-            Command.increase_patient_status(hospital)
-            output = buffer.getvalue()
-            assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
+    with mock.patch('builtins.input', return_value=invalid_id):
+        buffer = StringIO()
+        sys.stdout = buffer
+        Command.increase_patient_status(hospital)
+        output = buffer.getvalue()
+        assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
 
 
-def test_get_status_invalid_id(hospital):
+@pytest.mark.parametrize("invalid_id", ["0", "-2", "1.5"])
+def test_get_status_invalid_id(hospital, invalid_id):
     """Тест увеличения статуса пациента некорректный ID"""
-    invalid_ids = ["0", "-2", "1.5"]
-    for invalid_id in invalid_ids:
-        with mock.patch('builtins.input', return_value=invalid_id):
-            buffer = StringIO()
-            sys.stdout = buffer
-            Command.get_patient_status(hospital)
-            output = buffer.getvalue()
-            assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
+    with mock.patch('builtins.input', return_value=invalid_id):
+        buffer = StringIO()
+        sys.stdout = buffer
+        Command.get_patient_status(hospital)
+        output = buffer.getvalue()
+        assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
 
 
 def test_increase_patient_status_maximun_discharge(hospital):
