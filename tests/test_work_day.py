@@ -100,7 +100,7 @@ def test_print_statistics(hospital):
     """Расчет статистики"""
     buffer = StringIO()
     sys.stdout = buffer
-    Command.return_statistics(hospital)
+    Command.show_statistics(hospital)
     output = buffer.getvalue()
     assert output == "В больнице на данный момент находится 200 чел., из них:\n" \
                      "\tв статусе 'Болен': 200 чел.\n"
@@ -114,7 +114,7 @@ def test_print_statistics_all_status(hospital):
         Command.decrease_patient_status(hospital)
         for time in range(3):
             Command.increase_patient_status(hospital)
-        Command.return_statistics(hospital)
+        Command.show_statistics(hospital)
         output = buffer.getvalue()
         assert output == "Новый статус пациента: 'Тяжело болен'\n" \
                          "Новый статус пациента: 'Слегка болен'\n" \

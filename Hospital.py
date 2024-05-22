@@ -1,4 +1,5 @@
-from Patient import Patient
+from Patient import Patient, PatientStatus
+from custom_exceptions import MinimalStatusCantDownError, PatientIdNotIntAndPositiveError
 
 
 class Hospital:
@@ -8,39 +9,66 @@ class Hospital:
         self._patients = patients
 
     def get_patient_status(self, patient_id):
+        """Запрос: возвращает статус пациента"""
         patient = self.get_patient(patient_id)
         if patient:
             return Patient.get_status_name(patient.status)
+        else:
+            raise ValueError("Ошибка. Введите корректный ID пациента.")
+
+    def can_increase_patient_status(self, patient_id):
+        """Запрос: проверяет, можно ли повысить статус пациента"""
+        patient = self.get_patient(patient_id)
+        if patient:
+            return patient.can_increase_status()
+        else:
+            raise ValueError("Ошибка. Введите корректный ID пациента.")
+
+    def can_decrease_patient_status(self, patient_id):
+        """Запрос: проверяет, можно ли понизить статус пациента"""
+        patient = self.get_patient(patient_id)
+        if patient:
+            return patient.can_decrease_status()
+        else:
+            raise ValueError("Ошибка. Введите корректный ID пациента.")
+
+    def can_discharge_patient(self, patient_id):
+        """Запрос: проверяет, можно ли выписать пациента"""
+        patient = self.get_patient(patient_id)
+        if patient:
+            return patient.status == PatientStatus.READY_TO_DISCHARGE
         else:
             raise ValueError("Ошибка. Введите корректный ID пациента.")
 
     def increase_patient_status(self, patient_id):
+        """Команда: повышает статус пациента, если это возможно"""
         patient = self.get_patient(patient_id)
-        if patient:
-            if patient.increase_status():
-                possibility_discharge = False
-            else:
-                possibility_discharge = True
-            return Patient.get_status_name(patient.status), possibility_discharge
+        if patient and patient.can_increase_status():
+            patient.increase_status()
         else:
-            raise ValueError("Ошибка. Введите корректный ID пациента.")
+            if not patient:
+                raise ValueError("Ошибка. Введите корректный ID пациента.")
+            if not patient.can_increase_status():
+                pass
 
     def decrease_patient_status(self, patient_id):
+        """Команда: понижает статус пациента, если это возможно"""
         patient = self.get_patient(patient_id)
-        if patient and patient.decrease_status():
-            return Patient.get_status_name(patient.status)
+        if patient and patient.can_decrease_status():
+            patient.decrease_status()
         else:
-            raise ValueError("Ошибка. Нельзя понизить самый низкий статус (наши пациенты не умирают).")
+            raise MinimalStatusCantDownError("Ошибка. Нельзя понизить самый низкий статус (наши пациенты не умирают).")
 
     def discharge_patient(self, patient_id):
+        """Команда: выписывает пациента, если это возможно"""
         patient = self.get_patient(patient_id)
         if patient:
             self._patients.remove(patient)
-            return True
         else:
             raise ValueError("Ошибка. Введите корректный ID пациента.")
 
     def calculate_statistics(self):
+        """Запрос: вычисляет статистику по пациентам"""
         total_patients = len(self._patients)
         statuses_count = {status: 0 for status in Patient.STATUS_NAMES}
 
@@ -52,4 +80,12 @@ class Hospital:
         }
 
     def get_patient(self, patient_id):
+        """Запрос: возвращает объект пациента по ID"""
         return next((patient for patient in self._patients if patient.id == patient_id), None)
+
+    def patient_exist(self, patient_id):
+        """Запрос: проверяет, существует ли пациент с данным ID"""
+        if not (self.get_patient(patient_id) and patient_id is not None):
+            raise PatientIdNotIntAndPositiveError("Ошибка. В больнице нет пациента с таким ID")
+        else:
+            return patient_id

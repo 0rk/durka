@@ -20,22 +20,25 @@ class Patient:
         self.id = patient_id
         self.status = status
 
+    def can_increase_status(self):
+        """Запрос: можно ли увеличить статус пациента"""
+        return self.status.value < PatientStatus.READY_TO_DISCHARGE.value
+
+    def can_decrease_status(self):
+        """Запрос: можно ли уменьшить статус пациента"""
+        return self.status.value > PatientStatus.SEVERELY_ILL.value
+
     def increase_status(self):
-        if self.status.value < PatientStatus.READY_TO_DISCHARGE.value:
+        """Команда: увеличивает статус пациента, если это возможно"""
+        if self.can_increase_status():
             self.status = PatientStatus(self.status.value + 1)
-            status_increased = True
-        else:
-            status_increased = False
-        return status_increased
 
     def decrease_status(self):
-        if self.status.value > PatientStatus.SEVERELY_ILL.value:
+        """Команда: уменьшает статус пациента, если это возможно"""
+        if self.can_decrease_status():
             self.status = PatientStatus(self.status.value - 1)
-            status_decreased = True
-        else:
-            status_decreased = False
-        return status_decreased
 
     @staticmethod
     def get_status_name(status):
+        """Запрос: возвращает имя статуса пациента"""
         return Patient.STATUS_NAMES.get(status, "Неизвестный статус")

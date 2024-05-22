@@ -51,7 +51,9 @@ def test_increase_patient_status_invalid_id(hospital, invalid_id):
 @pytest.mark.parametrize("valid_id", [1, 50, 200])
 def test_increase_patient_status_valid_id(hospital, valid_id):
     """Тест увеличения статуса пациента валидный ID"""
-    output = hospital.increase_patient_status(valid_id)
+    possibility_discharge = hospital.can_discharge_patient(valid_id)
+    hospital.increase_patient_status(valid_id)
+    output = (hospital.get_patient_status(valid_id), possibility_discharge)
     assert output == ('Слегка болен', False)
 
 
@@ -61,5 +63,7 @@ def test_increase_patient_status_valid_id(hospital, valid_id):
                                               (4, ('Готов к выписке', True))])
 def test_increase_patient_all_status(hospital_all_status, valid_id, status):
     """Тест увеличения статуса пациента валидный ID все возможные виды статусов"""
-    output = hospital_all_status.increase_patient_status(valid_id)
+    possibility_discharge = hospital_all_status.can_discharge_patient(valid_id)
+    hospital_all_status.increase_patient_status(valid_id)
+    output = (hospital_all_status.get_patient_status(valid_id), possibility_discharge)
     assert output == status

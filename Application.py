@@ -1,8 +1,5 @@
 import re
-
-
-class CommandError(Exception):
-    pass
+from custom_exceptions import CommandError
 
 
 class Application:
@@ -32,7 +29,7 @@ class Application:
                     self._commands.discharge_patient()
                 elif any(re.search(command, keyword)
                          for keyword in ["calculate statistics", "рассчитать статистику"]):
-                    self._commands.return_statistics()
+                    self._commands.show_statistics()
                 else:
                     raise CommandError("Неизвестная команда! Попробуйте ещё раз")
             except CommandError as exception:
