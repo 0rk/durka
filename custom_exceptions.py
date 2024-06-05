@@ -5,12 +5,16 @@ class CommandError(Exception):
 
 class PatientNotExistsError(Exception):
     """Исключение для отсутствия пациента"""
-    pass
 
 
 class PatientIdNotIntAndPositiveError(Exception):
     """Исключение для корректности id пациента"""
-    pass
+    def __init__(self, message="Ошибка. ID пациента должно быть числом (целым, положительным)"):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
 
 
 class MinimalStatusCantDownError(Exception):

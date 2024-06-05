@@ -1,5 +1,5 @@
 from Patient import Patient, PatientStatus
-from custom_exceptions import MinimalStatusCantDownError, PatientIdNotIntAndPositiveError
+from custom_exceptions import MinimalStatusCantDownError, PatientIdNotIntAndPositiveError, PatientNotExistsError
 
 
 class Hospital:
@@ -14,7 +14,7 @@ class Hospital:
         if patient:
             return Patient.get_status_name(patient.status)
         else:
-            raise ValueError("Ошибка. Введите корректный ID пациента.")
+            raise PatientNotExistsError("Ошибка. Введите корректный ID пациента.")
 
     def can_increase_patient_status(self, patient_id):
         """Запрос: проверяет, можно ли повысить статус пациента"""
@@ -22,7 +22,7 @@ class Hospital:
         if patient:
             return patient.can_increase_status()
         else:
-            raise ValueError("Ошибка. Введите корректный ID пациента.")
+            raise PatientNotExistsError("Ошибка. Введите корректный ID пациента.")
 
     def can_decrease_patient_status(self, patient_id):
         """Запрос: проверяет, можно ли понизить статус пациента"""
@@ -30,7 +30,7 @@ class Hospital:
         if patient:
             return patient.can_decrease_status()
         else:
-            raise ValueError("Ошибка. Введите корректный ID пациента.")
+            raise PatientNotExistsError("Ошибка. Введите корректный ID пациента.")
 
     def can_discharge_patient(self, patient_id):
         """Запрос: проверяет, можно ли выписать пациента"""
@@ -38,7 +38,7 @@ class Hospital:
         if patient:
             return patient.status == PatientStatus.READY_TO_DISCHARGE
         else:
-            raise ValueError("Ошибка. Введите корректный ID пациента.")
+            raise PatientNotExistsError("Ошибка. Введите корректный ID пациента.")
 
     def increase_patient_status(self, patient_id):
         """Команда: повышает статус пациента, если это возможно"""
@@ -47,7 +47,7 @@ class Hospital:
             patient.increase_status()
         else:
             if not patient:
-                raise ValueError("Ошибка. Введите корректный ID пациента.")
+                raise PatientNotExistsError("Ошибка. Введите корректный ID пациента.")
             if not patient.can_increase_status():
                 pass
 
@@ -65,7 +65,7 @@ class Hospital:
         if patient:
             self._patients.remove(patient)
         else:
-            raise ValueError("Ошибка. Введите корректный ID пациента.")
+            raise PatientNotExistsError("Ошибка. Введите корректный ID пациента.")
 
     def calculate_statistics(self):
         """Запрос: вычисляет статистику по пациентам"""

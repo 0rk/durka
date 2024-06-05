@@ -35,12 +35,12 @@ def test_get_patient_id_valid_id(dialog, valid_id, int_patient_id):
     assert patient_id == int_patient_id
 
 
-@pytest.mark.parametrize("valid_id", ["да", "нет"])
-def test_discharge_patient_valid_input(dialog, valid_id):
+@pytest.mark.parametrize("valid_id, discharge_avalible", [("да", True), ("нет", False)])
+def test_discharge_patient_valid_input(dialog, valid_id, discharge_avalible):
     """Тест проверки получение статуса некорректный ID"""
     with mock.patch('builtins.input', return_value=valid_id):
         confirm = dialog.proposal_discharge_patient()
-    assert confirm == valid_id
+    assert confirm == discharge_avalible
 
 
 @pytest.mark.parametrize("invalid_id", ["yes", "no", "123", "до", "нит"])

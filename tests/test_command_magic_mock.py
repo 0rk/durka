@@ -2,6 +2,7 @@ from Hospital import Hospital
 from Command import Command
 from DialogWithUser import DialogWithUser
 from Patient import Patient, PatientStatus
+from custom_exceptions import PatientIdNotIntAndPositiveError
 
 from unittest.mock import MagicMock, patch
 from io import StringIO
@@ -36,14 +37,17 @@ def test_get_patient_status_invalid_id_solo(command):
 
 
 @pytest.mark.parametrize("input_value", ["1.5", "0", "1.5", "str", "строка"])
-def test_get_patient_status_invalid_id(command, input_value):
+def test_get_patient_status_invalid_id(input_value):
     """Тест проверки получения статуса некорректный ID"""
     with patch('builtins.input', return_value=input_value):
-        buffer = StringIO()
-        sys.stdout = buffer
+
+        command = Command(MagicMock(), MagicMock())
+        command._dialog_with_user.get_patient_id = MagicMock(side_effect=PatientIdNotIntAndPositiveError(
+            "Ошибка. ID пациента должно быть числом (целым, положительным)"))
         command.get_patient_status()
-        output = buffer.getvalue()
-        assert output == "Ошибка. ID пациента должно быть числом (целым, положительным)\n"
+        command._dialog_with_user.return_message_to_user.assert_called_with(
+            "Ошибка. ID пациента должно быть числом (целым, положительным)"
+        )
 
 
 @patch('builtins.input', lambda _: "201")

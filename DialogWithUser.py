@@ -42,7 +42,10 @@ class DialogWithUser:
         """Запрос: спрашивает пользователя, желает ли он выписать пациента"""
         confirm = input("Желаете этого клиента выписать? (да/нет): ").lower()
         if confirm in ["да", "нет"]:
-            return confirm
+            if confirm == "да":
+                return True
+            else:
+                return False
         else:
             raise ValueError("Некорректный ввод.")
 

@@ -13,7 +13,7 @@ class Command:
             patient_status = self._hospital.get_patient_status(patient_id)
             self._dialog_with_user.patient_status(patient_status)
         except PatientIdNotIntAndPositiveError as exception:
-            self._dialog_with_user.return_message_to_user(exception)
+            self._dialog_with_user.return_message_to_user(str(exception))
 
     def increase_patient_status(self):
         """Команда: увеличивает статус пациента"""
@@ -24,10 +24,10 @@ class Command:
             patient_status = self._hospital.get_patient_status(patient_id)
             if possibility_discharge:
                 confirm = self._dialog_with_user.proposal_discharge_patient()
-                if confirm == "да":
+                if confirm:
                     self._hospital.discharge_patient(patient_id)
                     self._dialog_with_user.discharge_patient()
-                elif confirm == "нет":
+                else:
                     self._dialog_with_user.remind_patient_status(patient_status)
 
             else:
@@ -42,9 +42,7 @@ class Command:
             self._hospital.decrease_patient_status(patient_id)
             patient_status = self._hospital.get_patient_status(patient_id)
             self._dialog_with_user.new_patient_status(patient_status)
-        except MinimalStatusCantDownError as exception:
-            self._dialog_with_user.return_message_to_user(exception)
-        except PatientIdNotIntAndPositiveError as exception:
+        except (MinimalStatusCantDownError, PatientIdNotIntAndPositiveError) as exception:
             self._dialog_with_user.return_message_to_user(exception)
 
     def discharge_patient(self):
