@@ -1,5 +1,5 @@
 from Patient import Patient, PatientStatus
-from custom_exceptions import MinimalStatusCantDownError, PatientIdNotIntAndPositiveError, PatientNotExistsError
+from custom_exceptions import MinimalStatusCantDownError, PatientNotExistsError
 
 
 class Hospital:
@@ -86,4 +86,4 @@ class Hospital:
     def patient_exist(self, patient_id):
         """Запрос: проверяет, существует ли пациент с данным ID"""
         if not self.get_patient(patient_id):
-            raise PatientIdNotIntAndPositiveError("Ошибка. В больнице нет пациента с таким ID")
+            raise PatientNotExistsError("Ошибка. В больнице нет пациента с таким ID")

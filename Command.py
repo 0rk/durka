@@ -1,4 +1,4 @@
-from custom_exceptions import PatientIdNotIntAndPositiveError, MinimalStatusCantDownError
+from custom_exceptions import PatientIdNotIntAndPositiveError, MinimalStatusCantDownError, PatientNotExistsError
 
 
 class Command:
@@ -12,7 +12,7 @@ class Command:
             patient_id = self._get_patient_id()
             patient_status = self._hospital.get_patient_status(patient_id)
             self._dialog_with_user.patient_status(patient_status)
-        except PatientIdNotIntAndPositiveError as exception:
+        except PatientNotExistsError as exception:
             self._dialog_with_user.return_message_to_user(str(exception))
 
     def increase_patient_status(self):
