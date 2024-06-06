@@ -20,18 +20,19 @@ class Command:
         try:
             patient_id = self._get_patient_id()
             possibility_discharge = self._hospital.can_discharge_patient(patient_id)
-            self._hospital.increase_patient_status(patient_id)
-            patient_status = self._hospital.get_patient_status(patient_id)
             if possibility_discharge:
                 confirm = self._dialog_with_user.proposal_discharge_patient()
                 if confirm:
                     self._hospital.discharge_patient(patient_id)
                     self._dialog_with_user.discharge_patient()
                 else:
+                    patient_status = self._hospital.get_patient_status(patient_id)
                     self._dialog_with_user.remind_patient_status(patient_status)
 
             else:
-                self._dialog_with_user.new_patient_status(patient_status)
+                self._hospital.increase_patient_status(patient_id)
+                new_patient_status = self._hospital.get_patient_status(patient_id)
+                self._dialog_with_user.new_patient_status(new_patient_status)
         except PatientIdNotIntAndPositiveError as exception:
             self._dialog_with_user.return_message_to_user(exception)
 
