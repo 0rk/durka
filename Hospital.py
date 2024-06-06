@@ -32,11 +32,11 @@ class Hospital:
         else:
             raise PatientNotExistsError("Ошибка. Введите корректный ID пациента.")
 
-    def can_discharge_patient(self, patient_id):
+    def possibility_increase_status(self, patient_id):
         """Запрос: проверяет, можно ли выписать пациента"""
         patient = self.get_patient(patient_id)
         if patient:
-            return patient.status == PatientStatus.READY_TO_DISCHARGE
+            return patient.status != PatientStatus.READY_TO_DISCHARGE
         else:
             raise PatientNotExistsError("Ошибка. Введите корректный ID пациента.")
 
