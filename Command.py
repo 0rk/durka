@@ -25,6 +25,7 @@ class Command:
                 new_patient_status = self._hospital.get_patient_status(patient_id)
                 self._dialog_with_user.new_patient_status(new_patient_status)
             else:
+                """Если статус пациента повысить нельзя, предполагаем что его пора выписывать"""
                 confirm = self._dialog_with_user.proposal_discharge_patient()
                 if confirm:
                     self._hospital.discharge_patient(patient_id)
