@@ -85,7 +85,5 @@ class Hospital:
 
     def patient_exist(self, patient_id):
         """Запрос: проверяет, существует ли пациент с данным ID"""
-        if not (self.get_patient(patient_id) and patient_id is not None):
+        if not self.get_patient(patient_id):
             raise PatientIdNotIntAndPositiveError("Ошибка. В больнице нет пациента с таким ID")
-        else:
-            return patient_id

@@ -67,4 +67,5 @@ class Command:
     def _get_patient_id(self):
         """Запрос: получает ID пациента от пользователя"""
         patient_id = self._dialog_with_user.get_patient_id()
-        return self._hospital.patient_exist(patient_id)
+        self._hospital.patient_exist(patient_id)
+        return patient_id
