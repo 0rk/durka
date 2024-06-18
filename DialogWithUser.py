@@ -22,13 +22,18 @@ class DialogWithUser:
         pattern = re.compile(r'\b' + modified_command + r'\b', re.IGNORECASE | re.UNICODE)
         return pattern
 
-    @staticmethod
-    def get_patient_id():
+    def get_patient_id(self):
+        """Запрос: получает ID пациента от пользователя"""
+        try:
+            return self._get_patient_id()
+        except PatientIdNotIntAndPositiveError as exception:
+            self.give_message_to_user(str(exception))
+
+    def _get_patient_id(self):
         """Запрос: получает ID пациента от пользователя"""
         patient_id = input("Введите ID пациента: ")
-        if DialogWithUser._is_positive_integer(patient_id):
+        if self._is_positive_integer(patient_id):
             return int(patient_id)
-
         raise PatientIdNotIntAndPositiveError("Ошибка. ID пациента должно быть числом (целым, положительным)")
 
     @staticmethod
@@ -38,7 +43,7 @@ class DialogWithUser:
         return DialogWithUser._typo_checking(command)
 
     @staticmethod
-    def proposal_discharge_patient():
+    def give_proposal_discharge_patient():
         """Запрос: спрашивает пользователя, желает ли он выписать пациента"""
         confirm = input("Желаете этого клиента выписать? (да/нет): ").lower()
         if confirm in ["да", "нет"]:
@@ -50,26 +55,26 @@ class DialogWithUser:
             raise ValueError("Некорректный ввод.")
 
     @staticmethod
-    def return_message_to_user(message):
+    def give_message_to_user(message):
         """Команда: выводит сообщение пользователю"""
         print(message)
 
-    def exit_message(self):
+    def give_exit_message(self):
         """Команда: выводит сообщение о завершении сеанса"""
-        self.return_message_to_user("Сеанс завершён.")
+        self.give_message_to_user("Сеанс завершён.")
 
-    def patient_status(self, patient_status):
+    def give_patient_status(self, patient_status):
         """Команда: выводит статус пациента"""
-        self.return_message_to_user(f"Статус пациента: '{patient_status}'")
+        self.give_message_to_user(f"Статус пациента: '{patient_status}'")
 
-    def new_patient_status(self, patient_status):
+    def give_new_patient_status(self, patient_status):
         """Команда: выводит новый статус пациента"""
-        self.return_message_to_user(f"Новый статус пациента: '{patient_status}'")
+        self.give_message_to_user(f"Новый статус пациента: '{patient_status}'")
 
-    def remind_patient_status(self, patient_status):
+    def give_remind_patient_status(self, patient_status):
         """Команда: напоминает о текущем статусе пациента"""
-        self.return_message_to_user(f"Пациент остался в статусе '{patient_status}'")
+        self.give_message_to_user(f"Пациент остался в статусе '{patient_status}'")
 
-    def discharge_patient(self):
+    def give_discharge_patient(self):
         """Команда: сообщает о выписке пациента"""
-        self.return_message_to_user("Пациент выписан из больницы")
+        self.give_message_to_user("Пациент выписан из больницы")
