@@ -18,7 +18,7 @@ def test_get_patient_status_invalid_id(invalid_id):
     with pytest.raises(PatientNotExistsError) as exception:
         hospital = Hospital([Patient(1, PatientStatus.ILL)])
         hospital.get_patient_status(invalid_id)
-    assert str(exception.value) == "Ошибка. Введите корректный ID пациента."
+    assert str(exception.value) == "Ошибка. В больнице нет пациента с таким ID"
 
 
 def test_get_patient_all_status():
@@ -37,7 +37,7 @@ def test_increase_patient_status_invalid_id(invalid_id):
     with pytest.raises(PatientNotExistsError) as exception:
         hospital = Hospital([Patient(1, PatientStatus.ILL)])
         hospital.increase_patient_status(invalid_id)
-    assert str(exception.value) == "Ошибка. Введите корректный ID пациента."
+    assert str(exception.value) == "Ошибка. В больнице нет пациента с таким ID"
 
 
 def test_increase_patient_status_valid_id():
@@ -46,4 +46,12 @@ def test_increase_patient_status_valid_id():
                          Patient(2, PatientStatus.ILL),
                          Patient(3, PatientStatus.ILL)])
     hospital.increase_patient_status(3)
-    assert hospital._patients[2].status == PatientStatus.SLIGHTLY_ILL
+    expected_patients = [
+        Patient(1, PatientStatus.ILL),
+        Patient(2, PatientStatus.ILL),
+        Patient(3, PatientStatus.SLIGHTLY_ILL)
+    ]
+
+    for expected_patient, actual_patient in zip(expected_patients, hospital._patients):
+        assert expected_patient.id == actual_patient.id
+        assert expected_patient.status == actual_patient.status

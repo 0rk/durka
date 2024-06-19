@@ -24,17 +24,10 @@ class DialogWithUser:
 
     def get_patient_id(self):
         """Запрос: получает ID пациента от пользователя"""
-        try:
-            return self._get_patient_id()
-        except PatientIdNotIntAndPositiveError as exception:
-            self.give_message_to_user(str(exception))
-
-    def _get_patient_id(self):
-        """Запрос: получает ID пациента от пользователя"""
         patient_id = input("Введите ID пациента: ")
         if self._is_positive_integer(patient_id):
             return int(patient_id)
-        raise PatientIdNotIntAndPositiveError("Ошибка. ID пациента должно быть числом (целым, положительным)")
+        raise PatientIdNotIntAndPositiveError
 
     @staticmethod
     def get_command(prompt="Введите команду: "):

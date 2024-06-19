@@ -45,7 +45,7 @@ def test_get_patient_status_invalid_id(input_value):
         command._dialog_with_user.get_patient_id = MagicMock(side_effect=PatientIdNotIntAndPositiveError(
             "Ошибка. ID пациента должно быть числом (целым, положительным)"))
         command.get_patient_status()
-        command._dialog_with_user.return_message_to_user.assert_called_with(
+        command._dialog_with_user.give_message_to_user.assert_called_with(
             "Ошибка. ID пациента должно быть числом (целым, положительным)"
         )
 
@@ -63,7 +63,7 @@ def test_get_patient_status_absent_id(command):
 @pytest.mark.parametrize("valid_id", [1, 50, 200])
 def test_get_patient_status_valid_id(command, valid_id):
     """Тест проверки получение статуса корректный ID"""
-    command._get_patient_id = MagicMock(return_value=valid_id)
+    command._dialog_with_user.get_patient_id = MagicMock(return_value=valid_id)
     buffer = StringIO()
     sys.stdout = buffer
     command.get_patient_status()
@@ -75,7 +75,7 @@ def test_get_patient_status_valid_id(command, valid_id):
                                               (3, "Слегка болен"), (4, "Готов к выписке")])
 def test_get_patient_all_status(command_all_status, valid_id, status):
     """Тест проверки получение статуса все возможные виды статусов"""
-    command_all_status._get_patient_id = MagicMock(return_value=valid_id)
+    command_all_status._dialog_with_user.get_patient_id = MagicMock(return_value=valid_id)
     buffer = StringIO()
     sys.stdout = buffer
     command_all_status.get_patient_status()
@@ -107,7 +107,7 @@ def test_increase_patient_status_absent_id(command):
 @pytest.mark.parametrize("valid_id", [1, 50, 200])
 def test_increase_patient_status_valid_id(command, valid_id):
     """Тест увеличения статуса пациента валидный ID"""
-    command._get_patient_id = MagicMock(return_value=valid_id)
+    command._dialog_with_user.get_patient_id = MagicMock(return_value=valid_id)
     buffer = StringIO()
     sys.stdout = buffer
     command.increase_patient_status()

@@ -39,7 +39,7 @@ def test_get_patient_id_valid_id(dialog, valid_id, int_patient_id):
 def test_discharge_patient_valid_input(dialog, valid_id, discharge_avalible):
     """Тест проверки получение статуса некорректный ID"""
     with mock.patch('builtins.input', return_value=valid_id):
-        confirm = dialog.proposal_discharge_patient()
+        confirm = dialog.give_proposal_discharge_patient()
     assert confirm == discharge_avalible
 
 
@@ -48,5 +48,5 @@ def test_discharge_patient_invalid_input(dialog, invalid_id):
     """Тест проверки получение статуса некорректный ID"""
     with mock.patch('builtins.input', return_value=invalid_id):
         with pytest.raises(ValueError) as exception:
-            dialog.proposal_discharge_patient()
+            dialog.give_proposal_discharge_patient()
     assert str(exception.value) == "Некорректный ввод."

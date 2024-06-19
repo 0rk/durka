@@ -1,10 +1,15 @@
 class CommandError(Exception):
     """Исключение для неизвестных команд"""
-    pass
+    def __init__(self, message="Неизвестная команда! Попробуйте ещё раз"):
+        self.message = message
+        super().__init__(self.message)
 
 
 class PatientNotExistsError(Exception):
     """Исключение для отсутствия пациента"""
+    def __init__(self, message="Ошибка. В больнице нет пациента с таким ID"):
+        self.message = message
+        super().__init__(self.message)
 
 
 class PatientIdNotIntAndPositiveError(Exception):
@@ -19,6 +24,10 @@ class PatientIdNotIntAndPositiveError(Exception):
 
 class MinimalStatusCantDownError(Exception):
     """Исключение для корректности id пациента"""
+    def __init__(self, message="Ошибка. Нельзя понизить самый низкий статус (наши пациенты не умирают)."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class StopApplication(Exception):
     pass
-
-
