@@ -2,7 +2,7 @@ from DialogWithUser import DialogWithUser
 
 from unittest import mock
 import pytest
-from custom_exceptions import PatientIdNotIntAndPositiveError
+from custom_exceptions import PatientIdNotIntAndPositiveError, CommandError
 
 
 @pytest.fixture
@@ -39,7 +39,7 @@ def test_get_patient_id_valid_id(dialog, valid_id, int_patient_id):
 def test_discharge_patient_valid_input(dialog, valid_id, discharge_avalible):
     """Тест проверки получение статуса некорректный ID"""
     with mock.patch('builtins.input', return_value=valid_id):
-        confirm = dialog.give_proposal_discharge_patient()
+        confirm = dialog.request_confirmation_discharge_patient()
     assert confirm == discharge_avalible
 
 
@@ -47,6 +47,6 @@ def test_discharge_patient_valid_input(dialog, valid_id, discharge_avalible):
 def test_discharge_patient_invalid_input(dialog, invalid_id):
     """Тест проверки получение статуса некорректный ID"""
     with mock.patch('builtins.input', return_value=invalid_id):
-        with pytest.raises(ValueError) as exception:
-            dialog.give_proposal_discharge_patient()
-    assert str(exception.value) == "Некорректный ввод."
+        with pytest.raises(CommandError) as exception:
+            dialog.request_confirmation_discharge_patient()
+    assert str(exception.value) == "Неизвестная команда! Попробуйте ещё раз"

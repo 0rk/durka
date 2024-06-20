@@ -23,11 +23,14 @@ class PatientIdNotIntAndPositiveError(Exception):
 
 
 class MinimalStatusCantDownError(Exception):
-    """Исключение для корректности id пациента"""
+    """Исключение для попытки понизить минимальный статус"""
     def __init__(self, message="Ошибка. Нельзя понизить самый низкий статус (наши пациенты не умирают)."):
         self.message = message
         super().__init__(self.message)
 
 
-class StopApplication(Exception):
-    pass
+class MaximumStatusCantUpError(Exception):
+    """Исключение для попытки повысить максимальный статус"""
+    def __init__(self, message="Ошибка. Нельзя повысить самый высокий статус (наши пациенты не боги)."):
+        self.message = message
+        super().__init__(self.message)

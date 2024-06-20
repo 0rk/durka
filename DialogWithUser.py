@@ -1,5 +1,5 @@
 import re
-from custom_exceptions import PatientIdNotIntAndPositiveError
+from custom_exceptions import PatientIdNotIntAndPositiveError, CommandError
 
 
 class DialogWithUser:
@@ -36,7 +36,7 @@ class DialogWithUser:
         return DialogWithUser._typo_checking(command)
 
     @staticmethod
-    def give_proposal_discharge_patient():
+    def request_confirmation_discharge_patient():
         """Запрос: спрашивает пользователя, желает ли он выписать пациента"""
         confirm = input("Желаете этого клиента выписать? (да/нет): ").lower()
         if confirm in ["да", "нет"]:
@@ -45,7 +45,7 @@ class DialogWithUser:
             else:
                 return False
         else:
-            raise ValueError("Некорректный ввод.")
+            raise CommandError
 
     @staticmethod
     def give_message_to_user(message):

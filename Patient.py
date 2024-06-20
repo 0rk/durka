@@ -1,4 +1,5 @@
 from enum import Enum
+from custom_exceptions import MinimalStatusCantDownError, MaximumStatusCantUpError
 
 
 class PatientStatus(Enum):
@@ -20,6 +21,11 @@ class Patient:
         self.id = patient_id
         self.status = status
 
+    def __eq__(self, other):
+        if isinstance(other, Patient):
+            return self.id == other.id and self.status == other.status
+        return False
+
     def can_increase_status(self):
         """Запрос: можно ли увеличить статус пациента"""
         return self.status.value < PatientStatus.READY_TO_DISCHARGE.value
@@ -32,11 +38,15 @@ class Patient:
         """Команда: увеличивает статус пациента, если это возможно"""
         if self.can_increase_status():
             self.status = PatientStatus(self.status.value + 1)
+        else:
+            raise MaximumStatusCantUpError
 
     def decrease_status(self):
         """Команда: уменьшает статус пациента, если это возможно"""
         if self.can_decrease_status():
             self.status = PatientStatus(self.status.value - 1)
+        else:
+            raise MinimalStatusCantDownError
 
     @staticmethod
     def get_status_name(status):

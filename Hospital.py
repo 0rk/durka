@@ -1,5 +1,5 @@
 from Patient import Patient
-from custom_exceptions import MinimalStatusCantDownError, PatientNotExistsError
+from custom_exceptions import PatientNotExistsError
 
 
 class Hospital:
@@ -26,16 +26,12 @@ class Hospital:
     def increase_patient_status(self, patient_id):
         """Команда: повышает статус пациента, если это возможно"""
         patient = self.get_patient(patient_id)
-        if patient.can_increase_status():
-            patient.increase_status()
+        patient.increase_status()
 
     def decrease_patient_status(self, patient_id):
         """Команда: понижает статус пациента, если это возможно"""
         patient = self.get_patient(patient_id)
-        if patient.can_decrease_status():
-            patient.decrease_status()
-        else:
-            raise MinimalStatusCantDownError
+        patient.decrease_status()
 
     def discharge_patient(self, patient_id):
         """Команда: выписывает пациента, если это возможно"""
@@ -57,6 +53,6 @@ class Hospital:
     def get_patient(self, patient_id):
         """Запрос: возвращает объект пациента по ID или вызывает исключение, если пациент не существует"""
         patient = next((patient for patient in self._patients if patient.id == patient_id), None)
-        if not patient:
+        if patient is None:
             raise PatientNotExistsError
         return patient
